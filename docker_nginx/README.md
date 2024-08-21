@@ -75,6 +75,13 @@ docker container inspect <id> | grep IPAddress
 ```bash
 docker attach --no-stdin <name_container>
 ```
+
+удаление всех неиспользуемых images
+
+```bash
+docker image prune -a
+```
+
 так же дополнительные команды docker
 
 [Доп материал 1](https://for-each.dev/lessons/b/-ops-docker-attach-detach-container)

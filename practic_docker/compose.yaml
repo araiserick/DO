@@ -1,0 +1,43 @@
+version: "3"
+x-deploy: &deploy-dev
+  deploy:
+    resources:
+      limits:
+        cpus: "1"
+        memory: 512M
+      reservations:
+        memory: 256M
+x-env_file: &env_file
+  env_file:
+    - .env
+x-restart: &restart
+  restart: on-failure
+
+include:
+  - ./proxy.yaml
+
+services:
+  web: 
+    image: cr.yandex/crp2f22ubf8sgpkthp1s/python_project:hello
+    <<: [*deploy-dev, *env_file, *restart]
+    environment:
+      - DB_HOST=172.20.0.10
+      - DB_USER=${MYSQL_USER:-app}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-very_strong}
+      - DB_NAME=${MYSQL_DATABASE:-example}
+      - DB_TABLE_NAME=${MYSQL_TABLE_NAME:-example}
+    networks:
+      backend:
+        ipv4_address: 172.20.0.5
+    
+  mysql:
+    image: mysql:8
+    volumes:
+      - ./db_data:/var/lib/mysql
+    networks: 
+      backend:
+        ipv4_address: 172.20.0.10
+    <<: [*deploy-dev, *env_file, *restart]
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-very_strong}
+    depends_on: ["web"]
