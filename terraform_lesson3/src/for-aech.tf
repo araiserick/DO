@@ -29,8 +29,7 @@ resource "yandex_compute_instance" "database" {
   }
 
   metadata = {
-    serial-port-enable = var.serial-port-enable
-    ssh-keys           = var.vms_ssh_root_key
+    serial-port-enable = local.serial-port
+    ssh-keys           = "ubuntu:${local.ssh-keys}"
   }
-
 }

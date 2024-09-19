@@ -38,7 +38,11 @@ variable "serial-port-enable" {
 ###ssh vars
 
 variable "vms_ssh_root_key" {
-  type        = string
+  type        = map(any)
+  default     = {
+    serial-port-enable = 1
+    ssh-keys           = "~/.ssh/id_rsa.pub"
+  }
 }
 
 variable "vm_resources_list" {
