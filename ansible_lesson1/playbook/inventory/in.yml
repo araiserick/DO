@@ -1,0 +1,6 @@
+prod:
+  hosts:
+    ansible_host: 10.6.48.11
+    ansible_connection: admin
+    ansible_password: b4rc/0BCD
+    
