@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ['sh', '-c', 'while true; do echo Netology! >> /output/output.txt; sleep 5; done']
+        volumeMounts:
+        - name: volume
+          mountPath: /output
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: HTTP_PORT
+          value: "80"
+        volumeMounts:
+        - name: volume
+          mountPath: /input
+      volumes:
+      - name: volume
+        persistentVolumeClaim:
+          claimName: pvc-one
