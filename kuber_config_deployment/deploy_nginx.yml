@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: web
-  name: dpl-nginx
-  namespace: netology
+  name: nginx
 spec:
   selector:
     matchLabels:
