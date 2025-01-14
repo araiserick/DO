@@ -1,4 +1,4 @@
-resource "yandex_vpc_networ" "develop" {
+resource "yandex_vpc_network" "develop" {
   name = "webservers"
 }
 resource "yandex_vpc_subnet" "develop" {
