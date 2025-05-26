@@ -1,4 +1,4 @@
-# Дипломный практикум в Yandex.Cloud - `Живарев Игорь`
+# Дипломный практикум в Yandex.Cloud - `Арайс Эрик`
 
  * [Цели:](#цели)
   * [Этапы выполнения:](#этапы-выполнения)
@@ -376,9 +376,9 @@ EXPOSE 80
 ```
 
 Выполняем сборку и выгрузку в реестр
-![build](img/diplom-12.png)
+![build](./img/diplom-12.png)
 
-![dockerhub](img/diplom-17.png)
+![dockerhub](./img/diplom-17.png)
 
 Разворачиваем `deploy` в кластере. Пример файла конфигурации в корне каталога `Diplom` (Diplom/deployment.yaml)
 ```
