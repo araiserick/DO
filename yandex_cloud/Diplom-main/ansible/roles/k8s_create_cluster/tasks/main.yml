@@ -1,0 +1,77 @@
+---
+# tasks file for k8s_create_cluster
+- name: Initialize the Kubernetes cluster using kubeadm # инициализируем кластер
+  become_user: root
+  command: kubeadm init
+
+- name: get permission # даем доступ для обычного пользователя
+  shell: "{{ item }}"
+  become_user: ubuntu
+  with_items:
+   - mkdir -p $HOME/.kube
+   - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   - sudo chmod 700 $HOME/.kube/config
+
+- name: Install calico pod network # устанавливаем calico pod network
+  become: false
+  shell: "{{ item }}"
+  with_items:
+   - curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml -O
+   - kubectl apply -f calico.yaml
+
+- name: Generate join command # показываем команду с добавлением ноды и записываем ее в переменную
+  become_user: ubuntu
+  command: kubeadm token create --print-join-command
+  register: kubernetes_join_command
+
+# - name: Copy join command to local file # создаем локальный файл и добавляем туда переменную для присоединения ноды
+#   local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
+
+- name: show the value of output
+  debug:
+    msg: "{{ kubernetes_join_command.stdout }}"
+
+- name: Touch a file /tmp/kubernetes_join_command
+  ansible.builtin.file:
+    path: /tmp/kubernetes_join_command
+    state: touch
+
+- name: Add a line to a file /tmp/kubernetes_join_command
+  ansible.builtin.lineinfile:
+    path: /tmp/kubernetes_join_command
+    line: 
+      msg: "{{ kubernetes_join_command.stdout_lines[0] }}"
+    create: yes
+
+- name: Chaenge to /tmp/kubernetes_join_command
+  become: yes
+  become_user: ubuntu
+  shell: awk -F"'" '{print $4}' /tmp/kubernetes_join_command >> /tmp/kubernetes_join
+  register: kubernetes_join_command
+
+- name: Copy join command to local machine.
+  fetch:
+    src: /tmp/kubernetes_join
+    dest: /tmp/
+    flat: true
+
+# - name: Copy file /etc/kubernetes/admin.conf & change permissions $HOME/.kube/config/
+#   become: yes
+#   become_user: ubuntu
+#   shell: |
+#       sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config
+#       sudo cp /tmp/kubernetes_join $HOME/.kube/config
+#       sudo chown $(id -u):$(id -g) $HOME/.kube/config
+#       sudo chmod 700 $HOME/.kube/config
+
+- name: Copy svc.yaml from Ansiblehost to the worker nodes.
+  become: yes
+  copy:
+    src: "{{playbook_dir}}/../k8s/svc.yaml"
+    dest: $HOME/svc.yaml
+
+# - name: Change permissions $HOME/svc.yaml
+#   become: yes
+#   become_user: ubuntu
+#   shell: sudo chown $(id -u):$(id -g)

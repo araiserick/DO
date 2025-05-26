@@ -1,0 +1,14 @@
+---
+# tasks file for node_invite
+  # - name: Copy the join command to server location # копируем файл с нашей комадной для присоединения ноды на сервер, меняем расширение и добавляем права на исполнение
+  #   copy: src=join-command dest=/tmp/join-command.sh mode=0777
+
+- name: Copy join command from Ansiblehost to the worker nodes.
+  become: yes
+  copy:
+    src: /tmp/kubernetes_join
+    dest: /tmp/kubernetes_join.sh
+    mode: 0777
+
+- name: Join the node to cluster # запускаем наш файл
+  command: sh /tmp/kubernetes_join.sh

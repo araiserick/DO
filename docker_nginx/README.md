@@ -97,7 +97,10 @@ sudo chmod 666 /var/run/docker.sock
 или решение найти по ссылке https://www.blackmoreops.com/2021/10/13/how-to-fix-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket-at-unix-var-run-docker-sock-error/
 
 Для подключение docker-in-docker
+
+```bash
 docker run -d --name gitlab-runner --restart always \
   -v /srv/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
   gitlab/gitlab-runner:latest
+  ```

@@ -1,0 +1,41 @@
+---
+# tasks file for k8s_helm
+  - name: Download and install script
+    shell: |
+        curl -fsSL -o $HOME/get-helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 $HOME/get-helm.sh
+        bash $HOME/get-helm.sh
+
+  - name: Create folder $HOME/k8s_nodeport
+    shell: "{{ item }}"
+    become_user: ubuntu
+    with_items:
+      - mkdir $HOME/k8s_nodeport
+
+  - name: Clone svc.yaml the Git repository
+    become_user: ubuntu
+    git:
+      repo: https://github.com/Zhivarev/k8s_nodeport.git
+      dest: $HOME/k8s_nodeport
+      clone: yes
+
+  - name: Add Helm repo & Run update Helm & Create namespace "monitoring" & install prometheus & apply svc.yaml
+    shell: "{{ item }}"
+    become_user: ubuntu
+    with_items:
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo update
+      - kubectl create namespace monitoring
+      - helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
+      - kubectl apply -f $HOME/k8s_nodeport/svc.yaml
+
+  - name: Pull docker container
+    shell: "{{ item }}"
+    with_items:
+      - docker pull registry.gitlab.com/zhivarev/diplom-nginx:latest
+
+  - name: Apply deployment.yaml
+    shell: "{{ item }}"
+    become_user: ubuntu
+    with_items:
+      - kubectl apply -f $HOME/k8s_nodeport/deployment.yaml

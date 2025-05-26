@@ -1,0 +1,14 @@
+[master]
+
+%{~ for i in master ~}
+${i["network_interface"][0]["nat_ip_address"]}
+
+%{~ endfor ~}
+
+[worker]
+
+%{~ for i in worker ~}
+${i["network_interface"][0]["nat_ip_address"]}
+
+%{~ endfor ~}
+

@@ -1,0 +1,9 @@
+---
+# tasks file for k8s_helm
+  - name: Add Helm repo & Run update Helm & Install gitlab-agent
+    shell: "{{ item }}"
+    become_user: ubuntu
+    with_items:
+      - helm repo add gitlab https://charts.gitlab.io
+      - helm repo update
+      - helm upgrade --install diplom-agent gitlab/gitlab-agent --namespace gitlab-agent-diplom-agent --create-namespace --set config.token=glagent-XdAUy9ntVXsXLZemXS7DyAozucbp_HAF22d9AGPg-tNzKZ-dxw --set config.kasAddress=wss://kas.gitlab.com
