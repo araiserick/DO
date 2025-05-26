@@ -1,5 +1,5 @@
 gitops:
   manifest_porojects:
-  - id: "Zhivarev/diplom-nginx"
+  - id: "Arais/diplom-nginx"
     paths:
     - glob: '/**/*.{yaml,yml.json}'

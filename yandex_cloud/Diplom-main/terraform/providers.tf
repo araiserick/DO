@@ -9,7 +9,7 @@ terraform {
     endpoints = {
       s3 = "https://storage.yandexcloud.net"
     }
-    bucket = "zhivarev"
+    bucket = "arais"
     region = "ru-central1"
     key    = "terraform.tfstate"
 
